@@ -1,9 +1,0 @@
-var _user$project$LoginModule$loginPageView = A2(
-	_elm_lang$html$Html$h1,
-	{ctor: '[]'},
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html$text('login'),
-		_1: {ctor: '[]'}
-	});
-var _user$project$LoginModule$NoOp = {ctor: 'NoOp'};
