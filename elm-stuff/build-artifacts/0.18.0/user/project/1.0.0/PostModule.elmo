@@ -1,0 +1,257 @@
+var _user$project$PostModule$postEncoder = F2(
+	function (title, content) {
+		return _elm_lang$core$Json_Encode$object(
+			{
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'title',
+					_1: _elm_lang$core$Json_Encode$string(title)
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'content',
+						_1: _elm_lang$core$Json_Encode$string(content)
+					},
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _user$project$PostModule$fetchAllUrl = 'http://localhost:3000/posts';
+var _user$project$PostModule$update = F2(
+	function (msg, posts) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'OnFetchAll':
+				if (_p0._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple4',
+						_0: _elm_lang$core$List$reverse(_p0._0._0),
+						_1: _elm_lang$core$Platform_Cmd$none,
+						_2: '',
+						_3: 0
+					};
+				} else {
+					return {ctor: '_Tuple4', _0: posts, _1: _elm_lang$core$Platform_Cmd$none, _2: '', _3: 0};
+				}
+			case 'OnCreate':
+				if (_p0._0.ctor === 'Ok') {
+					var _p1 = _p0._0._0;
+					return {
+						ctor: '_Tuple4',
+						_0: {ctor: '::', _0: _p1, _1: posts},
+						_1: _elm_lang$core$Platform_Cmd$none,
+						_2: 'add',
+						_3: _p1.id
+					};
+				} else {
+					return {ctor: '_Tuple4', _0: posts, _1: _elm_lang$core$Platform_Cmd$none, _2: '', _3: 0};
+				}
+			case 'DeletePost':
+				var newPosts = A2(
+					_elm_lang$core$List$filter,
+					function (x) {
+						return !_elm_lang$core$Native_Utils.eq(x.id, _p0._0);
+					},
+					posts);
+				return {ctor: '_Tuple4', _0: newPosts, _1: _elm_lang$core$Platform_Cmd$none, _2: 'delete', _3: 0};
+			case 'TriggerShowPost':
+				return {ctor: '_Tuple4', _0: posts, _1: _elm_lang$core$Platform_Cmd$none, _2: 'show', _3: _p0._0};
+			default:
+				return {ctor: '_Tuple4', _0: posts, _1: _elm_lang$core$Platform_Cmd$none, _2: 'edit', _3: _p0._0};
+		}
+	});
+var _user$project$PostModule$defaultPost = {title: '', content: '', id: 0};
+var _user$project$PostModule$PostModel = F3(
+	function (a, b, c) {
+		return {title: a, content: b, id: c};
+	});
+var _user$project$PostModule$postDecoder = A4(
+	_elm_lang$core$Json_Decode$map3,
+	_user$project$PostModule$PostModel,
+	A2(_elm_lang$core$Json_Decode$field, 'title', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'content', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'id', _elm_lang$core$Json_Decode$int));
+var _user$project$PostModule$collectionDecoder = _elm_lang$core$Json_Decode$list(_user$project$PostModule$postDecoder);
+var _user$project$PostModule$TriggerEditPost = function (a) {
+	return {ctor: 'TriggerEditPost', _0: a};
+};
+var _user$project$PostModule$TriggerShowPost = function (a) {
+	return {ctor: 'TriggerShowPost', _0: a};
+};
+var _user$project$PostModule$postSingle = function (post) {
+	return A2(
+		_elm_lang$html$Html$a,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('list-group-item'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onClick(
+					_user$project$PostModule$TriggerShowPost(post.id)),
+				_1: {ctor: '[]'}
+			}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h4,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('list-group-item-heading'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'Title: ',
+							_elm_lang$core$Basics$toString(post.title))),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$p,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('list-group-item-text'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$PostModule$DeletePost = function (a) {
+	return {ctor: 'DeletePost', _0: a};
+};
+var _user$project$PostModule$singlePostPageView = F2(
+	function (posts, num) {
+		var post = A2(
+			_elm_lang$core$Maybe$withDefault,
+			_user$project$PostModule$defaultPost,
+			_elm_lang$core$List$head(
+				A2(
+					_elm_lang$core$List$filter,
+					function (x) {
+						return _elm_lang$core$Native_Utils.eq(x.id, num);
+					},
+					posts)));
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h3,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'Title',
+								_elm_lang$core$Basics$toString(post.title))),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$p,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'Title',
+									_elm_lang$core$Basics$toString(post.content))),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$button,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('btn btn-default helper-margin'),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Events$onClick(
+												_user$project$PostModule$TriggerEditPost(post.id)),
+											_1: {ctor: '[]'}
+										}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Edit'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$button,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$class('btn btn-primary helper-margin'),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Events$onClick(
+													_user$project$PostModule$DeletePost(post.id)),
+												_1: {ctor: '[]'}
+											}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Delete'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			});
+	});
+var _user$project$PostModule$OnCreate = function (a) {
+	return {ctor: 'OnCreate', _0: a};
+};
+var _user$project$PostModule$createPost = function (post) {
+	return A2(
+		_elm_lang$http$Http$send,
+		_user$project$PostModule$OnCreate,
+		A3(
+			_elm_lang$http$Http$post,
+			'http://localhost:3000/posts',
+			_elm_lang$http$Http$jsonBody(
+				A2(_user$project$PostModule$postEncoder, post.title, post.content)),
+			_user$project$PostModule$postDecoder));
+};
+var _user$project$PostModule$OnFetchAll = function (a) {
+	return {ctor: 'OnFetchAll', _0: a};
+};
+var _user$project$PostModule$fetchAll = A2(
+	_elm_lang$http$Http$send,
+	_user$project$PostModule$OnFetchAll,
+	A2(_elm_lang$http$Http$get, _user$project$PostModule$fetchAllUrl, _user$project$PostModule$collectionDecoder));

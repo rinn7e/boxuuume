@@ -1,0 +1,147 @@
+var _user$project$Type$initStageBoxList = {
+	ctor: '::',
+	_0: {
+		size: {ctor: '_Tuple2', _0: 30, _1: 30},
+		position: {ctor: '_Tuple2', _0: 15, _1: 15},
+		color: 'blue',
+		v: {ctor: '_Tuple2', _0: 0, _1: 0}
+	},
+	_1: {
+		ctor: '::',
+		_0: {
+			size: {ctor: '_Tuple2', _0: 30, _1: 30},
+			position: {ctor: '_Tuple2', _0: 45, _1: 15},
+			color: 'green',
+			v: {ctor: '_Tuple2', _0: 0, _1: 0}
+		},
+		_1: {
+			ctor: '::',
+			_0: {
+				size: {ctor: '_Tuple2', _0: 30, _1: 30},
+				position: {ctor: '_Tuple2', _0: 75, _1: 15},
+				color: 'blue',
+				v: {ctor: '_Tuple2', _0: 0, _1: 0}
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					size: {ctor: '_Tuple2', _0: 30, _1: 30},
+					position: {ctor: '_Tuple2', _0: 105, _1: 15},
+					color: 'green',
+					v: {ctor: '_Tuple2', _0: 0, _1: 0}
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						size: {ctor: '_Tuple2', _0: 30, _1: 30},
+						position: {ctor: '_Tuple2', _0: 135, _1: 15},
+						color: 'blue',
+						v: {ctor: '_Tuple2', _0: 0, _1: 0}
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							size: {ctor: '_Tuple2', _0: 30, _1: 30},
+							position: {ctor: '_Tuple2', _0: 165, _1: 15},
+							color: 'green',
+							v: {ctor: '_Tuple2', _0: 0, _1: 0}
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								size: {ctor: '_Tuple2', _0: 30, _1: 30},
+								position: {ctor: '_Tuple2', _0: 195, _1: 15},
+								color: 'blue',
+								v: {ctor: '_Tuple2', _0: 0, _1: 0}
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									size: {ctor: '_Tuple2', _0: 30, _1: 30},
+									position: {ctor: '_Tuple2', _0: 225, _1: 15},
+									color: 'green',
+									v: {ctor: '_Tuple2', _0: 0, _1: 0}
+								},
+								_1: {
+									ctor: '::',
+									_0: {
+										size: {ctor: '_Tuple2', _0: 30, _1: 30},
+										position: {ctor: '_Tuple2', _0: 255, _1: 15},
+										color: 'blue',
+										v: {ctor: '_Tuple2', _0: 0, _1: 0}
+									},
+									_1: {
+										ctor: '::',
+										_0: {
+											size: {ctor: '_Tuple2', _0: 30, _1: 30},
+											position: {ctor: '_Tuple2', _0: 285, _1: 15},
+											color: 'green',
+											v: {ctor: '_Tuple2', _0: 0, _1: 0}
+										},
+										_1: {
+											ctor: '::',
+											_0: {
+												size: {ctor: '_Tuple2', _0: 30, _1: 30},
+												position: {ctor: '_Tuple2', _0: 315, _1: 15},
+												color: 'blue',
+												v: {ctor: '_Tuple2', _0: 0, _1: 0}
+											},
+											_1: {
+												ctor: '::',
+												_0: {
+													size: {ctor: '_Tuple2', _0: 30, _1: 30},
+													position: {ctor: '_Tuple2', _0: 195, _1: 15},
+													color: 'blue',
+													v: {ctor: '_Tuple2', _0: 0, _1: 0}
+												},
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$Type$initPlayerBox = {
+	size: {ctor: '_Tuple2', _0: 30, _1: 30},
+	position: {ctor: '_Tuple2', _0: 300, _1: 400},
+	color: 'red',
+	v: {ctor: '_Tuple2', _0: 0, _1: 0}
+};
+var _user$project$Type$Game = F7(
+	function (a, b, c, d, e, f, g) {
+		return {title: a, windowSize: b, player: c, stage: d, direction: e, keyPressed: f, keyReleased: g};
+	});
+var _user$project$Type$Box = F4(
+	function (a, b, c, d) {
+		return {size: a, position: b, color: c, v: d};
+	});
+var _user$project$Type$DownKey = {ctor: 'DownKey'};
+var _user$project$Type$UpKey = {ctor: 'UpKey'};
+var _user$project$Type$RightKey = {ctor: 'RightKey'};
+var _user$project$Type$LeftKey = {ctor: 'LeftKey'};
+var _user$project$Type$NoKey = {ctor: 'NoKey'};
+var _user$project$Type$game = {
+	title: 'hello world',
+	windowSize: {ctor: '_Tuple2', _0: 600, _1: 600},
+	player: _user$project$Type$initPlayerBox,
+	stage: _user$project$Type$initStageBoxList,
+	direction: {ctor: '_Tuple2', _0: 0, _1: 0},
+	keyPressed: _user$project$Type$NoKey,
+	keyReleased: _user$project$Type$NoKey
+};
+var _user$project$Type$KeyReleased = function (a) {
+	return {ctor: 'KeyReleased', _0: a};
+};
+var _user$project$Type$KeyPressed = function (a) {
+	return {ctor: 'KeyPressed', _0: a};
+};
+var _user$project$Type$Tick = function (a) {
+	return {ctor: 'Tick', _0: a};
+};
+var _user$project$Type$NoOp = {ctor: 'NoOp'};

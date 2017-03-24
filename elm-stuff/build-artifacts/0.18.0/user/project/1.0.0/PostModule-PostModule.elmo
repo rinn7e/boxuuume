@@ -1,0 +1,286 @@
+var _user$project$PostModule_PostModule$otherPageView = A2(
+	_elm_lang$html$Html$div,
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$class('col-md-6'),
+		_1: {ctor: '[]'}
+	},
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html$text(''),
+		_1: {ctor: '[]'}
+	});
+var _user$project$PostModule_PostModule$postEncoder = F2(
+	function (title, content) {
+		return _elm_lang$core$Json_Encode$object(
+			{
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'title',
+					_1: _elm_lang$core$Json_Encode$string(title)
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'content',
+						_1: _elm_lang$core$Json_Encode$string(content)
+					},
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _user$project$PostModule_PostModule$postDecoder = A4(
+	_elm_lang$core$Json_Decode$map3,
+	_user$project$PostModule_PostListModule$PostSingleModel,
+	A2(_elm_lang$core$Json_Decode$field, 'title', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'content', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'id', _elm_lang$core$Json_Decode$int));
+var _user$project$PostModule_PostModule$collectionDecoder = _elm_lang$core$Json_Decode$list(_user$project$PostModule_PostModule$postDecoder);
+var _user$project$PostModule_PostModule$fetchAllUrl = 'http://localhost:3000/posts';
+var _user$project$PostModule_PostModule$PostModel = F3(
+	function (a, b, c) {
+		return {page: a, postList: b, postInput: c};
+	});
+var _user$project$PostModule_PostModule$OtherPage = {ctor: 'OtherPage'};
+var _user$project$PostModule_PostModule$initModel = {
+	page: _user$project$PostModule_PostModule$OtherPage,
+	postList: {ctor: '[]'},
+	postInput: _user$project$PostModule_PostInputModule$initModel
+};
+var _user$project$PostModule_PostModule$EditPostPage = {ctor: 'EditPostPage'};
+var _user$project$PostModule_PostModule$SinglePostPage = function (a) {
+	return {ctor: 'SinglePostPage', _0: a};
+};
+var _user$project$PostModule_PostModule$AddPostPage = {ctor: 'AddPostPage'};
+var _user$project$PostModule_PostModule$OnCreate = function (a) {
+	return {ctor: 'OnCreate', _0: a};
+};
+var _user$project$PostModule_PostModule$createPost = function (post) {
+	return A2(
+		_elm_lang$http$Http$send,
+		_user$project$PostModule_PostModule$OnCreate,
+		A3(
+			_elm_lang$http$Http$post,
+			'http://localhost:3000/posts',
+			_elm_lang$http$Http$jsonBody(
+				A2(_user$project$PostModule_PostModule$postEncoder, post.title, post.content)),
+			_user$project$PostModule_PostModule$postDecoder));
+};
+var _user$project$PostModule_PostModule$OnFetchAll = function (a) {
+	return {ctor: 'OnFetchAll', _0: a};
+};
+var _user$project$PostModule_PostModule$fetchAll = A2(
+	_elm_lang$http$Http$send,
+	_user$project$PostModule_PostModule$OnFetchAll,
+	A2(_elm_lang$http$Http$get, _user$project$PostModule_PostModule$fetchAllUrl, _user$project$PostModule_PostModule$collectionDecoder));
+var _user$project$PostModule_PostModule$ShowPost = function (a) {
+	return {ctor: 'ShowPost', _0: a};
+};
+var _user$project$PostModule_PostModule$ShowNewPost = {ctor: 'ShowNewPost'};
+var _user$project$PostModule_PostModule$PostInputModule = function (a) {
+	return {ctor: 'PostInputModule', _0: a};
+};
+var _user$project$PostModule_PostModule$PostListModule = function (a) {
+	return {ctor: 'PostListModule', _0: a};
+};
+var _user$project$PostModule_PostModule$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'PostListModule':
+				var _p1 = A2(_user$project$PostModule_PostListModule$update, _p0._0, model.postList);
+				var newPosts = _p1._0;
+				var cmd = _p1._1;
+				var trigger = _p1._2;
+				var params = _p1._3;
+				var newPage = _elm_lang$core$Native_Utils.eq(trigger, 'show') ? _user$project$PostModule_PostModule$SinglePostPage(params) : (_elm_lang$core$Native_Utils.eq(trigger, 'delete') ? _user$project$PostModule_PostModule$OtherPage : (_elm_lang$core$Native_Utils.eq(trigger, 'edit') ? _user$project$PostModule_PostModule$EditPostPage : (_elm_lang$core$Native_Utils.eq(trigger, 'add') ? _user$project$PostModule_PostModule$SinglePostPage(params) : model.page)));
+				var postInput = _elm_lang$core$Native_Utils.eq(trigger, 'edit') ? A2(
+					_elm_lang$core$Maybe$withDefault,
+					_user$project$PostModule_PostInputModule$initModel,
+					_elm_lang$core$List$head(
+						A2(
+							_elm_lang$core$List$filter,
+							function (x) {
+								return _elm_lang$core$Native_Utils.eq(x.id, params);
+							},
+							model.postList))) : _user$project$PostModule_PostInputModule$initModel;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{postList: newPosts, page: newPage, postInput: postInput}),
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$PostModule_PostModule$PostListModule, cmd)
+				};
+			case 'PostInputModule':
+				var _p2 = A2(_user$project$PostModule_PostInputModule$update, _p0._0, model.postInput);
+				var newPostInput = _p2._0;
+				var cmd = _p2._1;
+				var trigger = _p2._2;
+				var command = _elm_lang$core$Native_Utils.eq(trigger, 'createSubmit') ? _user$project$PostModule_PostModule$createPost(model.postInput) : (_elm_lang$core$Native_Utils.eq(trigger, 'editSubmit') ? _elm_lang$core$Platform_Cmd$none : _elm_lang$core$Platform_Cmd$none);
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{postInput: newPostInput}),
+					_1: command
+				};
+			case 'ShowNewPost':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{page: _user$project$PostModule_PostModule$AddPostPage, postInput: _user$project$PostModule_PostInputModule$initModel}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ShowPost':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							page: _user$project$PostModule_PostModule$SinglePostPage(_p0._0)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'OnFetchAll':
+				if (_p0._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								postList: _elm_lang$core$List$reverse(_p0._0._0)
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
+			default:
+				if (_p0._0.ctor === 'Ok') {
+					var _p3 = _p0._0._0;
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								postList: {ctor: '::', _0: _p3, _1: model.postList},
+								page: _user$project$PostModule_PostModule$SinglePostPage(_p3.id)
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
+		}
+	});
+var _user$project$PostModule_PostModule$pageView = function (model) {
+	var _p4 = model.page;
+	switch (_p4.ctor) {
+		case 'AddPostPage':
+			return A2(
+				_elm_lang$html$Html$map,
+				_user$project$PostModule_PostModule$PostInputModule,
+				_user$project$PostModule_PostInputModule$addPostPageView(model.postInput));
+		case 'EditPostPage':
+			return A2(
+				_elm_lang$html$Html$map,
+				_user$project$PostModule_PostModule$PostInputModule,
+				_user$project$PostModule_PostInputModule$editPostPageView(model.postInput));
+		case 'SinglePostPage':
+			return A2(
+				_elm_lang$html$Html$map,
+				_user$project$PostModule_PostModule$PostListModule,
+				A2(_user$project$PostModule_PostListModule$singlePostPageView, model.postList, _p4._0));
+		default:
+			return _user$project$PostModule_PostModule$otherPageView;
+	}
+};
+var _user$project$PostModule_PostModule$postSingleMain = function (post) {
+	return A2(
+		_elm_lang$html$Html$map,
+		_user$project$PostModule_PostModule$PostListModule,
+		_user$project$PostModule_PostListModule$postSingle(post));
+};
+var _user$project$PostModule_PostModule$postModuleView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('col-md-6'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$h1,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('All Posts'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$button,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('btn btn-primary helper-margin'),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Events$onClick(_user$project$PostModule_PostModule$ShowNewPost),
+											_1: {ctor: '[]'}
+										}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Add'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('list-group list-custom'),
+									_1: {ctor: '[]'}
+								},
+								A2(_elm_lang$core$List$map, _user$project$PostModule_PostModule$postSingleMain, model.postList)),
+							_1: {ctor: '[]'}
+						}
+					}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('col-md-6'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _user$project$PostModule_PostModule$pageView(model),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};

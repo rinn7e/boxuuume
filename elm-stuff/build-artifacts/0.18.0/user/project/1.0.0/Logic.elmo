@@ -1,0 +1,226 @@
+var _user$project$Logic$keyReleasedUpdate = F2(
+	function (game, key) {
+		var gamePlayer = game.player;
+		var keyPressed = game.keyPressed;
+		var _p0 = game.player.v;
+		var vx = _p0._0;
+		var vy = _p0._1;
+		var _p1 = function () {
+			var _p2 = key;
+			switch (_p2.ctor) {
+				case 'LeftKey':
+					return _elm_lang$core$Native_Utils.eq(keyPressed, _user$project$Type$RightKey) ? {ctor: '_Tuple2', _0: vx, _1: vy} : {ctor: '_Tuple2', _0: 0, _1: vy};
+				case 'RightKey':
+					return _elm_lang$core$Native_Utils.eq(keyPressed, _user$project$Type$LeftKey) ? {ctor: '_Tuple2', _0: vx, _1: vy} : {ctor: '_Tuple2', _0: 0, _1: vy};
+				case 'UpKey':
+					return _elm_lang$core$Native_Utils.eq(keyPressed, _user$project$Type$DownKey) ? {ctor: '_Tuple2', _0: vx, _1: vy} : {ctor: '_Tuple2', _0: vx, _1: 0};
+				case 'DownKey':
+					return _elm_lang$core$Native_Utils.eq(keyPressed, _user$project$Type$UpKey) ? {ctor: '_Tuple2', _0: vx, _1: vy} : {ctor: '_Tuple2', _0: vx, _1: 0};
+				default:
+					return {ctor: '_Tuple2', _0: 0, _1: 0};
+			}
+		}();
+		var vx2 = _p1._0;
+		var vy2 = _p1._1;
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				game,
+				{
+					player: _elm_lang$core$Native_Utils.update(
+						gamePlayer,
+						{
+							v: {ctor: '_Tuple2', _0: vx2, _1: vy2}
+						})
+				}),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _user$project$Logic$keyPressedUpdate = F2(
+	function (game, key) {
+		var gamePlayer = game.player;
+		var _p3 = game.player.v;
+		var vx = _p3._0;
+		var vy = _p3._1;
+		var _p4 = function () {
+			var _p5 = key;
+			switch (_p5.ctor) {
+				case 'LeftKey':
+					return {ctor: '_Tuple2', _0: -2, _1: vy};
+				case 'RightKey':
+					return {ctor: '_Tuple2', _0: 2, _1: vy};
+				case 'UpKey':
+					return {ctor: '_Tuple2', _0: vx, _1: 2};
+				case 'DownKey':
+					return {ctor: '_Tuple2', _0: vx, _1: -2};
+				default:
+					return {ctor: '_Tuple2', _0: 0, _1: 0};
+			}
+		}();
+		var vx2 = _p4._0;
+		var vy2 = _p4._1;
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				game,
+				{
+					player: _elm_lang$core$Native_Utils.update(
+						gamePlayer,
+						{
+							v: {ctor: '_Tuple2', _0: vx2, _1: vy2}
+						}),
+					keyPressed: key
+				}),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _user$project$Logic$collision = function (game) {
+	var gamePlayer = game.player;
+	var _p6 = game.player.size;
+	var width = _p6._0;
+	var height = _p6._1;
+	var _p7 = game.player.v;
+	var vx = _p7._0;
+	var vy = _p7._1;
+	var _p8 = game.player.position;
+	var x = _p8._0;
+	var y = _p8._1;
+	var xStart = x - _elm_lang$core$Basics$round(
+		_elm_lang$core$Basics$toFloat(width) / 2);
+	var xEnd = x + _elm_lang$core$Basics$round(
+		_elm_lang$core$Basics$toFloat(width) / 2);
+	var collisionListX = A2(
+		_elm_lang$core$List$filter,
+		function (stageBox) {
+			var _p9 = stageBox.size;
+			var widthBox = _p9._0;
+			var heightBox = _p9._1;
+			var _p10 = stageBox.position;
+			var xBox = _p10._0;
+			var yBox = _p10._1;
+			var start = xBox - _elm_lang$core$Basics$round(
+				_elm_lang$core$Basics$toFloat(widthBox) / 2);
+			var end = xBox + _elm_lang$core$Basics$round(
+				_elm_lang$core$Basics$toFloat(widthBox) / 2);
+			return ((_elm_lang$core$Native_Utils.cmp(xStart, start) > -1) && (_elm_lang$core$Native_Utils.cmp(xStart, end) < 1)) || ((_elm_lang$core$Native_Utils.cmp(xEnd, start) > -1) && (_elm_lang$core$Native_Utils.cmp(xEnd, end) < 1));
+		},
+		game.stage);
+	var test = A2(_elm_lang$core$Debug$log, 'test', collisionListX);
+	var yStart = y - _elm_lang$core$Basics$round(
+		_elm_lang$core$Basics$toFloat(height) / 2);
+	var collisionListY = A2(
+		_elm_lang$core$List$filter,
+		function (stageBox) {
+			var _p11 = stageBox.size;
+			var widthBox = _p11._0;
+			var heightBox = _p11._1;
+			var _p12 = stageBox.position;
+			var xBox = _p12._0;
+			var yBox = _p12._1;
+			var start = xBox - _elm_lang$core$Basics$round(
+				_elm_lang$core$Basics$toFloat(heightBox) / 2);
+			var end = yBox + _elm_lang$core$Basics$round(
+				_elm_lang$core$Basics$toFloat(heightBox) / 2);
+			return _elm_lang$core$Native_Utils.cmp(yStart - end, 0) < 1;
+		},
+		collisionListX);
+	var test2 = A2(_elm_lang$core$Debug$log, 'test2', collisionListY);
+	var _p13 = _elm_lang$core$Native_Utils.eq(
+		_elm_lang$core$List$length(collisionListY),
+		0) ? ((_elm_lang$core$Native_Utils.cmp(vy, -4) > -1) ? {ctor: '_Tuple2', _0: vx, _1: vy - 1} : {ctor: '_Tuple2', _0: vx, _1: -4}) : {ctor: '_Tuple2', _0: vx, _1: 0};
+	var vx2 = _p13._0;
+	var vy2 = _p13._1;
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{
+			player: _elm_lang$core$Native_Utils.update(
+				gamePlayer,
+				{
+					v: {ctor: '_Tuple2', _0: vx2, _1: vy2}
+				})
+		});
+};
+var _user$project$Logic$motion = function (game) {
+	var gamePlayer = game.player;
+	var _p14 = game.player.v;
+	var vx = _p14._0;
+	var vy = _p14._1;
+	var _p15 = game.player.position;
+	var x = _p15._0;
+	var y = _p15._1;
+	var _p16 = {
+		ctor: '_Tuple2',
+		_0: x + _elm_lang$core$Basics$round(vx),
+		_1: y + _elm_lang$core$Basics$round(vy)
+	};
+	var x2 = _p16._0;
+	var y2 = _p16._1;
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{
+			player: _elm_lang$core$Native_Utils.update(
+				gamePlayer,
+				{
+					position: {ctor: '_Tuple2', _0: x2, _1: y2}
+				})
+		});
+};
+var _user$project$Logic$gravity = function (game) {
+	var gamePlayer = game.player;
+	var _p17 = game.player.v;
+	var vx = _p17._0;
+	var vy = _p17._1;
+	var _p18 = (_elm_lang$core$Native_Utils.cmp(vy, -4) > -1) ? {ctor: '_Tuple2', _0: vx, _1: vy - 1} : {ctor: '_Tuple2', _0: vx, _1: -4};
+	var vx2 = _p18._0;
+	var vy2 = _p18._1;
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{
+			player: _elm_lang$core$Native_Utils.update(
+				gamePlayer,
+				{
+					v: {ctor: '_Tuple2', _0: vx2, _1: vy2}
+				})
+		});
+};
+var _user$project$Logic$gameUpdate = function (game) {
+	return {
+		ctor: '_Tuple2',
+		_0: _user$project$Logic$collision(
+			_user$project$Logic$motion(game)),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _user$project$Logic$keyReleased = function (code) {
+	var _p19 = code;
+	switch (_p19) {
+		case 37:
+			return _user$project$Type$KeyReleased(_user$project$Type$LeftKey);
+		case 38:
+			return _user$project$Type$KeyReleased(_user$project$Type$UpKey);
+		case 39:
+			return _user$project$Type$KeyReleased(_user$project$Type$RightKey);
+		case 40:
+			return _user$project$Type$KeyReleased(_user$project$Type$DownKey);
+		default:
+			return _user$project$Type$KeyReleased(_user$project$Type$NoKey);
+	}
+};
+var _user$project$Logic$keyPressed = function (code) {
+	var _p20 = code;
+	switch (_p20) {
+		case 37:
+			return _user$project$Type$KeyPressed(_user$project$Type$LeftKey);
+		case 38:
+			return _user$project$Type$KeyPressed(_user$project$Type$UpKey);
+		case 39:
+			return _user$project$Type$KeyPressed(_user$project$Type$RightKey);
+		case 40:
+			return _user$project$Type$KeyPressed(_user$project$Type$DownKey);
+		default:
+			return _user$project$Type$KeyPressed(_user$project$Type$NoKey);
+	}
+};
+var _user$project$Logic$keyReleasedBind = _elm_lang$keyboard$Keyboard$ups(_user$project$Logic$keyReleased);
+var _user$project$Logic$keyPressedBind = _elm_lang$keyboard$Keyboard$downs(_user$project$Logic$keyPressed);
+var _user$project$Logic$tick = A2(_elm_lang$core$Time$every, (1000 / 60) * _elm_lang$core$Time$millisecond, _user$project$Type$Tick);

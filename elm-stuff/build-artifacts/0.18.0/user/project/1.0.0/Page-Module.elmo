@@ -1,0 +1,5 @@
+var _user$project$Page_Module$OtherPage = {ctor: 'OtherPage'};
+var _user$project$Page_Module$SinglePostPage = function (a) {
+	return {ctor: 'SinglePostPage', _0: a};
+};
+var _user$project$Page_Module$AddPostPage = {ctor: 'AddPostPage'};
