@@ -10,6 +10,7 @@ type alias Game =
     , stage : List Box
     , direction : ( Int, Int )
     , isJump : Bool
+    , stageLeft : Int
     , keyPressed : Key
     , keyReleased : Key
     }
@@ -21,6 +22,7 @@ game =
     , windowSize = ( 600, 600 )
     , player = initPlayerBox
     , isJump = True
+    , stageLeft = 0
     , stage = initStageBoxList
     , direction = ( 0, 0 )
     , keyPressed = NoKey
@@ -84,6 +86,16 @@ initStageBoxList =
       }
     , { size = ( 30, 30 )
       , position = ( 255, 75 )
+      , color = "#0095ff"
+      , v = ( 0, 0 )
+      }
+    , { size = ( 300, 30 )
+      , position = ( 755, 135 )
+      , color = "#0095ff"
+      , v = ( 0, 0 )
+      }
+    , { size = ( 300, 30 )
+      , position = ( 1170, 135 )
       , color = "#0095ff"
       , v = ( 0, 0 )
       }

@@ -18,10 +18,21 @@ render game =
                 , ( "position", "relative" )
                 , ( "height", (toString height) ++ "px" )
                 , ( "width", (toString width) ++ "px" )
+                , ( "overflow", "hidden" )
                 ]
             ]
-            [ div [] (List.map boxRender game.stage)
-            , boxRender game.player
+            [ div
+                [ style
+                    [ -- ( "backgroundColor", "purple" )
+                      -- ,
+                      ( "position", "relative" )
+                    , ( "left", (toString game.stageLeft) ++ "px" )
+                    , ( "height", (toString height) ++ "px" )
+                    ]
+                ]
+                [ div [] (List.map boxRender game.stage)
+                , boxRender game.player
+                ]
             ]
 
 

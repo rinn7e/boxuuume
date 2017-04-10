@@ -103,8 +103,14 @@ motion game =
 
         gamePlayer =
             game.player
+
+        newStageLeft =
+            if (-x2 + 100) >= 0 then
+                game.stageLeft
+            else
+                -x2 + 100
     in
-        { game | player = { gamePlayer | position = ( x2, y2 ) } }
+        { game | player = { gamePlayer | position = ( x2, y2 ) }, stageLeft = newStageLeft }
 
 
 collisionVertical : Game -> Game
