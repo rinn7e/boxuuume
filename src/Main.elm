@@ -29,51 +29,8 @@ update msg game =
         KeyReleased key ->
             keyReleasedUpdate game key
 
-        --     let
-        --         ( x, y ) =
-        --             model.direction
-        --
-        --         keyPressed =
-        --             model.keyPressed
-        --
-        --         direction_ =
-        --             case key of
-        --                 LeftKey ->
-        --                     if keyPressed == RightKey then
-        --                         ( x, y )
-        --                     else
-        --                         ( 0, y )
-        --
-        --                 RightKey ->
-        --                     if keyPressed == LeftKey then
-        --                         ( x, y )
-        --                     else
-        --                         ( 0, y )
-        --
-        --                 UpKey ->
-        --                     if keyPressed == DownKey then
-        --                         ( x, y )
-        --                     else
-        --                         ( x, 0 )
-        --
-        --                 DownKey ->
-        --                     if keyPressed == UpKey then
-        --                         ( x, y )
-        --                     else
-        --                         ( x, 0 )
-        --
-        --                 _ ->
-        --                     ( 0, 0 )
-        --     in
-        --         ( { model | direction = direction_ }, Cmd.none )
         _ ->
             ( game, Cmd.none )
-
-
-
--- subscriptions : Model -> Sub Msg
--- subscriptions model =
---     Sub.none
 
 
 subscriptions : Game -> Sub Msg

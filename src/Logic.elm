@@ -67,25 +67,26 @@ keyReleased code =
 
 gameUpdate : Game -> ( Game, Cmd msg )
 gameUpdate game =
-    ( game |> motion |> collision, Cmd.none )
+    ( game |> motion |> collisionVertical |> collisionHorizontal, Cmd.none )
 
 
-gravity : Game -> Game
-gravity game =
-    let
-        ( vx, vy ) =
-            game.player.v
 
-        ( vx2, vy2 ) =
-            if vy >= -4 then
-                ( vx, vy - 1 )
-            else
-                ( vx, -4 )
-
-        gamePlayer =
-            game.player
-    in
-        { game | player = { gamePlayer | v = ( vx2, vy2 ) } }
+-- gravity : Game -> Game
+-- gravity game =
+--     let
+--         ( vx, vy ) =
+--             game.player.v
+--
+--         ( vx2, vy2 ) =
+--             if vy >= -4 then
+--                 ( vx, vy - 1 )
+--             else
+--                 ( vx, -4 )
+--
+--         gamePlayer =
+--             game.player
+--     in
+--         { game | player = { gamePlayer | v = ( vx2, vy2 ) } }
 
 
 motion : Game -> Game
@@ -106,87 +107,70 @@ motion game =
         { game | player = { gamePlayer | position = ( x2, y2 ) } }
 
 
-collision : Game -> Game
-collision game =
+collisionVertical : Game -> Game
+collisionVertical game =
     let
-        ( x, y ) =
-            game.player.position
-
         ( vx, vy ) =
             game.player.v
 
-        ( width, height ) =
-            game.player.size
+        ( x, y ) =
+            game.player.position
 
-        xStart =
-            x - (round ((toFloat width) / 2))
+        playerLeft =
+            findPos Left game.player
 
-        xEnd =
-            x + (round ((toFloat width) / 2))
+        playerRight =
+            findPos Right game.player
 
-        yStart =
-            y - (round ((toFloat height) / 2))
+        playerBottom =
+            findPos Bottom game.player
 
-        collisionListX =
-            List.filter
-                (\stageBox ->
-                    let
-                        ( xBox, yBox ) =
-                            stageBox.position
+        boxBelowPlayerList =
+            game.stage
+                |> List.filter (isBoxBelowPlayer playerLeft playerRight)
 
-                        ( widthBox, heightBox ) =
-                            stageBox.size
+        boxTouchPlayer =
+            boxBelowPlayerList |> List.filter (isBoxTouchPlayer playerBottom)
 
-                        start =
-                            xBox - (round ((toFloat widthBox) / 2))
+        debugBoxTouchPlayer =
+            Debug.log "boxTouchPlayer" boxTouchPlayer
 
-                        end =
-                            xBox + (round ((toFloat widthBox) / 2))
-                    in
-                        ((xStart >= start && xStart <= end) || (xEnd >= start && xEnd <= end))
-                )
-                game.stage
-
-        collisionListY =
-            List.filter
-                (\stageBox ->
-                    let
-                        ( xBox, yBox ) =
-                            stageBox.position
-
-                        ( widthBox, heightBox ) =
-                            stageBox.size
-
-                        start =
-                            xBox - (round ((toFloat heightBox) / 2))
-
-                        end =
-                            yBox + (round ((toFloat heightBox) / 2))
-                    in
-                        (yStart - end) <= 0
-                )
-                collisionListX
-
-        test =
-            Debug.log "test" collisionListX
-
-        test2 =
-            Debug.log "test2" collisionListY
-
-        ( vx2, vy2 ) =
-            if List.length collisionListY == 0 then
-                -- ( 0, vy )
+        ( vx2, vy2, newPoxY, jumpStatus ) =
+            if List.length boxTouchPlayer == 0 then
+                -- GRAVITY
                 if vy >= -4 then
-                    ( vx, vy - 1 )
+                    ( vx, vy - 1, y, True )
                 else
-                    ( vx, -4 )
+                    ( vx, -4, y, True )
             else
-                ( vx, 0 )
+                let
+                    box =
+                        List.head boxTouchPlayer
+                            |> Maybe.withDefault Type.emptyStageBox
+
+                    boxPosY =
+                        Tuple.second box.position
+
+                    boxHeight =
+                        Tuple.second box.size
+                in
+                    ( vx, 0, boxPosY + boxHeight, False )
 
         gamePlayer =
             game.player
     in
-        { game | player = { gamePlayer | v = ( vx2, vy2 ) } }
+        { game
+            | player =
+                { gamePlayer
+                    | v = ( vx2, vy2 )
+                    , position = ( x, newPoxY )
+                }
+            , isJump = jumpStatus
+        }
+
+
+collisionHorizontal game =
+    game
 
 
 
@@ -202,16 +186,19 @@ keyPressedUpdate game key =
         ( vx2, vy2 ) =
             case key of
                 LeftKey ->
-                    ( -2, vy )
+                    ( -4, vy )
 
                 RightKey ->
-                    ( 2, vy )
+                    ( 4, vy )
 
                 UpKey ->
-                    ( vx, 2 )
+                    if game.isJump then
+                        ( vx, vy )
+                    else
+                        ( vx, 10 )
 
                 DownKey ->
-                    ( vx, -2 )
+                    ( vx, vy )
 
                 _ ->
                     ( 0, 0 )
@@ -267,103 +254,56 @@ keyReleasedUpdate game key =
 
 
 
+-- ( game, Cmd.none )
 ----------------------------------
 -- helper function
 -----------------------------
--- checkGravity model =
---     let
---         ( x, y ) =
---             model.player.position
---
---         ( width, height ) =
---             model.player.size
---
---         xStart =
---             x - (truncate ((toFloat width) / 2))
---
---         xEnd =
---             x + (truncate ((toFloat width) / 2))
---
---         yStart =
---             y - (truncate ((toFloat height) / 2))
---
---         gravity =
---             let
---                 collisionListX =
---                     List.filter
---                         (\stageBox ->
---                             let
---                                 ( xBox, yBox ) =
---                                     stageBox.position
---
---                                 ( widthBox, heightBox ) =
---                                     stageBox.size
---
---                                 start =
---                                     xBox - (truncate ((toFloat widthBox) / 2))
---
---                                 end =
---                                     xBox + (truncate ((toFloat widthBox) / 2))
---                             in
---                                 ((xStart >= start && xStart <= end) || (xEnd >= start && xEnd <= end))
---                         )
---                         model.stage
---
---                 collisionListY =
---                     List.filter
---                         (\stageBox ->
---                             let
---                                 ( xBox, yBox ) =
---                                     stageBox.position
---
---                                 ( widthBox, heightBox ) =
---                                     stageBox.size
---
---                                 start =
---                                     xBox - (truncate ((toFloat heightBox) / 2))
---
---                                 end =
---                                     yBox + (truncate ((toFloat heightBox) / 2))
---                             in
---                                 (yStart - end) == 0
---                         )
---                         collisionListX
---
---                 test =
---                     Debug.log "test" collisionListX
---
---                 test2 =
---                     Debug.log "test2" collisionListY
---             in
---                 if y /= (truncate ((toFloat height) / 2)) && List.length collisionListY == 0 then
---                     1
---                 else
---                     0
---
---         modelPlayer =
---             model.player
---
---         player_ =
---             { modelPlayer | position = ( x, y - gravity ) }
---     in
---         { model | player = player_ }
---
---
--- checkKey model =
---     let
---         ( x, y ) =
---             model.player.position
---
---         ( dx, dy ) =
---             model.direction
---
---         modelPlayer =
---             model.player
---
---         sp =
---             model.player.v
---
---         player_ =
---             { modelPlayer | position = ( x + dx * sp, y + dy * sp ) }
---     in
---         { model | player = player_ }
+
+
+findPos : PositionModel -> Box -> Int
+findPos positionType box =
+    let
+        ( coordinateX, coordinateY ) =
+            box.position
+
+        ( width, height ) =
+            box.size
+    in
+        case positionType of
+            Left ->
+                coordinateX - (round ((toFloat width) / 2))
+
+            Right ->
+                coordinateX + (round ((toFloat width) / 2))
+
+            Top ->
+                coordinateY + (round ((toFloat height) / 2))
+
+            Bottom ->
+                coordinateY - (round ((toFloat height) / 2))
+
+
+isBoxBelowPlayer : Int -> Int -> Box -> Bool
+isBoxBelowPlayer playerLeft playerRight box =
+    let
+        boxLeft =
+            findPos Left box
+
+        boxRight =
+            findPos Right box
+    in
+        (boxLeft <= playerLeft && playerLeft <= boxRight)
+            || (boxLeft <= playerRight && playerRight <= boxRight)
+
+
+isBoxTouchPlayer : Int -> Box -> Bool
+isBoxTouchPlayer playerBottom box =
+    let
+        boxTop =
+            findPos Top box
+    in
+        (playerBottom - boxTop) <= 0 && (playerBottom - boxTop) >= -5
+
+
+
+--prevent from edge shrinking

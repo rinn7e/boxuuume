@@ -9,6 +9,7 @@ type alias Game =
     , player : Box
     , stage : List Box
     , direction : ( Int, Int )
+    , isJump : Bool
     , keyPressed : Key
     , keyReleased : Key
     }
@@ -19,6 +20,7 @@ game =
     { title = "hello world"
     , windowSize = ( 600, 600 )
     , player = initPlayerBox
+    , isJump = True
     , stage = initStageBoxList
     , direction = ( 0, 0 )
     , keyPressed = NoKey
@@ -34,75 +36,55 @@ type alias Box =
     }
 
 
+
+-- Use for finding the edge of box coz of position is in the middle
+
+
+type PositionModel
+    = Top
+    | Bottom
+    | Left
+    | Right
+
+
 initPlayerBox : Box
 initPlayerBox =
     { size = ( 30, 30 )
-    , position = ( 300, 400 )
-    , color = "red"
+    , position = ( 100, 400 )
+    , color = "#ff00ff"
+    , v = ( 0, 0 )
+    }
+
+
+emptyStageBox : Box
+emptyStageBox =
+    { size = ( 0, 0 )
+    , position = ( 0, 0 )
+    , color = "black"
     , v = ( 0, 0 )
     }
 
 
 initStageBoxList : List Box
 initStageBoxList =
-    [ { size = ( 30, 30 )
-      , position = ( 15, 15 )
-      , color = "blue"
+    [ { size = ( 300, 30 )
+      , position = ( 150, 15 )
+      , color = "#0095ff"
+      , v = ( 0, 0 )
+      }
+    , { size = ( 300, 30 )
+      , position = ( 420, 105 )
+      , color = "#0095ff"
       , v = ( 0, 0 )
       }
     , { size = ( 30, 30 )
-      , position = ( 45, 15 )
-      , color = "green"
+      , position = ( 195, 45 )
+      , color = "#0095ff"
       , v = ( 0, 0 )
       }
     , { size = ( 30, 30 )
-      , position = ( 75, 15 )
-      , color = "blue"
-      , v = ( 0, 0 )
-      }
-    , { size = ( 30, 30 )
-      , position = ( 105, 15 )
-      , color = "green"
-      , v = ( 0, 0 )
-      }
-    , { size = ( 30, 30 )
-      , position = ( 135, 15 )
-      , color = "blue"
-      , v = ( 0, 0 )
-      }
-    , { size = ( 30, 30 )
-      , position = ( 165, 15 )
-      , color = "green"
-      , v = ( 0, 0 )
-      }
-    , { size = ( 30, 30 )
-      , position = ( 195, 15 )
-      , color = "blue"
-      , v = ( 0, 0 )
-      }
-    , { size = ( 30, 30 )
-      , position = ( 225, 15 )
-      , color = "green"
-      , v = ( 0, 0 )
-      }
-    , { size = ( 30, 30 )
-      , position = ( 255, 15 )
-      , color = "blue"
-      , v = ( 0, 0 )
-      }
-    , { size = ( 30, 30 )
-      , position = ( 285, 15 )
-      , color = "green"
-      , v = ( 0, 0 )
-      }
-    , { size = ( 30, 30 )
-      , position = ( 315, 15 )
-      , color = "blue"
-      , v = ( 0, 0 )
-      }
-    , { size = ( 30, 30 )
-      , position = ( 195, 15 )
-      , color = "blue"
+      , position = ( 255, 75 )
+      , color = "#0095ff"
       , v = ( 0, 0 )
       }
     ]
