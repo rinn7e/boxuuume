@@ -38,6 +38,9 @@ keyPressed code =
         40 ->
             KeyPressed DownKey
 
+        80 ->
+            ChangeState Pause
+
         default ->
             KeyPressed NoKey
 
@@ -67,7 +70,12 @@ keyReleased code =
 
 gameUpdate : Game -> ( Game, Cmd msg )
 gameUpdate game =
-    ( game |> motion |> collisionVertical |> collisionHorizontal, Cmd.none )
+    ( game
+        |> motion
+        |> collisionVertical
+        |> collisionHorizontal
+    , Cmd.none
+    )
 
 
 

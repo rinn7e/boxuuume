@@ -9,7 +9,7 @@ import Logic exposing (..)
 main : Program Never Game Msg
 main =
     Html.program
-        { init = ( game, Cmd.none )
+        { init = ( init, Cmd.none )
         , update = update
         , view = render
         , subscriptions = subscriptions
@@ -29,10 +29,24 @@ update msg game =
         KeyReleased key ->
             keyReleasedUpdate game key
 
+        ChangeState state ->
+            ( { game | state = state }, Cmd.none )
+
+        Restart ->
+            ( { init | state = Playing }, Cmd.none )
+
         _ ->
             ( game, Cmd.none )
 
 
 subscriptions : Game -> Sub Msg
 subscriptions game =
-    Sub.batch [ keyPressedBind, keyReleasedBind, tick ]
+    case game.state of
+        Menu ->
+            Sub.none
+
+        Playing ->
+            Sub.batch [ keyPressedBind, keyReleasedBind, tick ]
+
+        _ ->
+            Sub.none

@@ -6,7 +6,7 @@ import Html.Attributes exposing (..)
 import Type exposing (..)
 
 
-render : Game -> Html msg
+render : Game -> Html Msg
 render game =
     let
         ( width, height ) =
@@ -21,19 +21,56 @@ render game =
                 , ( "overflow", "hidden" )
                 ]
             ]
-            [ div
-                [ style
-                    [ -- ( "backgroundColor", "purple" )
-                      -- ,
-                      ( "position", "relative" )
-                    , ( "left", (toString game.stageLeft) ++ "px" )
-                    , ( "height", (toString height) ++ "px" )
-                    ]
-                ]
-                [ div [] (List.map boxRender game.stage)
-                , boxRender game.player
-                ]
+            [ case game.state of
+                Menu ->
+                    menuView
+
+                Playing ->
+                    div
+                        [ style
+                            [ -- ( "backgroundColor", "purple" )
+                              -- ,
+                              ( "position", "relative" )
+                            , ( "left", (toString game.stageLeft) ++ "px" )
+                            , ( "height", (toString height) ++ "px" )
+                            ]
+                        ]
+                        [ div [] (List.map boxRender game.stage)
+                        , boxRender game.player
+                        ]
+
+                Pause ->
+                    div
+                        [ style
+                            [ ( "color", "white" )
+                            , ( "position", "relative" )
+                            , ( "left", "250px" )
+                            , ( "height", "250px" )
+                            ]
+                        ]
+                        [ h1 [] [ text "Pause" ]
+                        , p [ onClick (ChangeState Playing) ] [ text "Resume" ]
+                        , p [ onClick (Restart) ] [ text "Restart" ]
+                        ]
+
+                _ ->
+                    div [] []
             ]
+
+
+menuView : Html Msg
+menuView =
+    div
+        [ style
+            [ ( "color", "white" )
+            , ( "position", "relative" )
+            , ( "left", "250px" )
+            , ( "height", "250px" )
+            ]
+        ]
+        [ h1 [] [ text "Menu" ]
+        , p [ onClick (ChangeState Playing) ] [ text "Play" ]
+        ]
 
 
 boxRender : Box -> Html msg

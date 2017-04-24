@@ -6,6 +6,7 @@ import Time exposing (..)
 type alias Game =
     { title : String
     , windowSize : ( Int, Int )
+    , state : StateModel
     , player : Box
     , stage : List Box
     , direction : ( Int, Int )
@@ -16,10 +17,11 @@ type alias Game =
     }
 
 
-game : Game
-game =
+init : Game
+init =
     { title = "hello world"
     , windowSize = ( 600, 600 )
+    , state = Menu
     , player = initPlayerBox
     , isJump = True
     , stageLeft = 0
@@ -36,6 +38,13 @@ type alias Box =
     , color : String
     , v : ( Float, Float )
     }
+
+
+type StateModel
+    = Menu
+    | Playing
+    | Pause
+    | Dead
 
 
 
@@ -115,3 +124,5 @@ type Msg
     | Tick Time
     | KeyPressed Key
     | KeyReleased Key
+    | ChangeState StateModel
+    | Restart
