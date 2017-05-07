@@ -1,68 +1,7 @@
 module Logic exposing (..)
 
 import Type exposing (..)
-import Time exposing (..)
 import Keyboard exposing (..)
-
-
--- Subscriptions Listen in background
-
-
-tick : Sub Msg
-tick =
-    Time.every ((1000 / 60) * Time.millisecond) Tick
-
-
-keyPressedBind : Sub Msg
-keyPressedBind =
-    Keyboard.downs keyPressed
-
-
-keyReleasedBind : Sub Msg
-keyReleasedBind =
-    Keyboard.ups keyReleased
-
-
-keyPressed : Keyboard.KeyCode -> Msg
-keyPressed code =
-    case code of
-        37 ->
-            KeyPressed LeftKey
-
-        38 ->
-            KeyPressed UpKey
-
-        39 ->
-            KeyPressed RightKey
-
-        40 ->
-            KeyPressed DownKey
-
-        80 ->
-            ChangeState Pause
-
-        default ->
-            KeyPressed NoKey
-
-
-keyReleased : Keyboard.KeyCode -> Msg
-keyReleased code =
-    case code of
-        37 ->
-            KeyReleased LeftKey
-
-        38 ->
-            KeyReleased UpKey
-
-        39 ->
-            KeyReleased RightKey
-
-        40 ->
-            KeyReleased DownKey
-
-        default ->
-            KeyReleased NoKey
-
 
 
 -- Update
@@ -72,29 +11,11 @@ gameUpdate : Game -> ( Game, Cmd msg )
 gameUpdate game =
     ( game
         |> motion
-        |> collisionVertical
         |> collisionHorizontal
+        |> collisionVertical
+        |> enemyCollision
     , Cmd.none
     )
-
-
-
--- gravity : Game -> Game
--- gravity game =
---     let
---         ( vx, vy ) =
---             game.player.v
---
---         ( vx2, vy2 ) =
---             if vy >= -4 then
---                 ( vx, vy - 1 )
---             else
---                 ( vx, -4 )
---
---         gamePlayer =
---             game.player
---     in
---         { game | player = { gamePlayer | v = ( vx2, vy2 ) } }
 
 
 motion : Game -> Game
@@ -144,12 +65,12 @@ collisionVertical game =
                 |> List.filter (isBoxBelowPlayer playerLeft playerRight)
 
         boxTouchPlayer =
-            boxBelowPlayerList |> List.filter (isBoxTouchPlayer playerBottom)
+            boxBelowPlayerList |> List.filter (isBoxTouchVertPlayer playerBottom)
 
         debugBoxTouchPlayer =
             Debug.log "boxTouchPlayer" boxTouchPlayer
 
-        ( vx2, vy2, newPoxY, jumpStatus ) =
+        ( vx2, vy2, newPosY, jumpStatus ) =
             if List.length boxTouchPlayer == 0 then
                 -- GRAVITY
                 if vy >= -4 then
@@ -170,6 +91,17 @@ collisionVertical game =
                 in
                     ( vx, 0, boxPosY + boxHeight, False )
 
+        _ =
+            Debug.log "Debug:" y
+
+        gameState =
+            if y < 0 then
+                Dead
+            else
+                Playing
+
+        -- _ =
+        --     Debug.log "Debug:" state
         gamePlayer =
             game.player
     in
@@ -177,98 +109,154 @@ collisionVertical game =
             | player =
                 { gamePlayer
                     | v = ( vx2, vy2 )
-                    , position = ( x, newPoxY )
+                    , position = ( x, newPosY )
                 }
             , isJump = jumpStatus
+            , state = gameState
         }
 
 
 collisionHorizontal game =
-    game
-
-
-
--------------------------------------------------
-
-
-keyPressedUpdate : Game -> Key -> ( Game, Cmd msg )
-keyPressedUpdate game key =
     let
         ( vx, vy ) =
             game.player.v
 
-        ( vx2, vy2 ) =
-            case key of
-                LeftKey ->
-                    ( -4, vy )
+        ( x, y ) =
+            game.player.position
 
-                RightKey ->
-                    ( 4, vy )
+        ( width, height ) =
+            game.player.size
 
-                UpKey ->
-                    if game.isJump then
-                        ( vx, vy )
-                    else
-                        ( vx, 10 )
+        playerBottom =
+            findPos Bottom game.player
 
-                DownKey ->
-                    ( vx, vy )
+        playerTop =
+            findPos Top game.player
 
-                _ ->
-                    ( 0, 0 )
+        playerLeft =
+            findPos Left game.player
 
-        gamePlayer =
-            game.player
-    in
-        ( { game | player = { gamePlayer | v = ( vx2, vy2 ) }, keyPressed = key }, Cmd.none )
+        playerRight =
+            findPos Right game.player
 
+        boxBetweenPlayerList =
+            game.stage
+                |> List.filter (isBoxBetweenPlayer playerTop playerBottom)
 
-keyReleasedUpdate : Game -> Key -> ( Game, Cmd msg )
-keyReleasedUpdate game key =
-    let
-        ( vx, vy ) =
-            game.player.v
+        _ =
+            Debug.log "boxBetweenPlayer" boxBetweenPlayerList
 
-        keyPressed =
-            game.keyPressed
+        boxTouchHorzPlayer =
+            boxBetweenPlayerList |> List.filter (isBoxTouchHorzPlayer playerLeft playerRight)
 
-        ( vx2, vy2 ) =
-            case key of
-                LeftKey ->
-                    if keyPressed == RightKey then
-                        ( vx, vy )
-                    else
-                        ( 0, vy )
+        _ =
+            Debug.log "boxTouchHorzPlayer" boxTouchHorzPlayer
 
-                RightKey ->
-                    if keyPressed == LeftKey then
-                        ( vx, vy )
-                    else
-                        ( 0, vy )
+        ( vx2, newPosX ) =
+            if List.length boxTouchHorzPlayer == 0 then
+                ( vx, x )
+            else
+                let
+                    box =
+                        List.head boxTouchHorzPlayer
+                            |> Maybe.withDefault Type.emptyStageBox
 
-                UpKey ->
-                    if keyPressed == DownKey then
-                        ( vx, vy )
-                    else
-                        ( vx, 0 )
+                    boxPosX =
+                        Tuple.first box.position
 
-                DownKey ->
-                    if keyPressed == UpKey then
-                        ( vx, vy )
-                    else
-                        ( vx, 0 )
-
-                _ ->
-                    ( 0, 0 )
+                    boxWidth =
+                        Tuple.first box.size
+                in
+                    ( vx
+                    , round
+                        (((toFloat boxPosX) - ((toFloat boxWidth) / 2))
+                            - (toFloat width / 2)
+                        )
+                        - 1
+                    )
 
         gamePlayer =
             game.player
     in
-        ( { game | player = { gamePlayer | v = ( vx2, vy2 ) } }, Cmd.none )
+        { game
+            | player =
+                { gamePlayer
+                    | v = ( vx2, vy )
+                    , position = ( newPosX, y )
+                }
+        }
 
 
 
+-- game
+-- { game
+--     | player =
+--         { gamePlayer
+--             | v = ( vx2, vy )
+--             , position = ( newPosX, y )
+--         }
+-- }
 -- ( game, Cmd.none )
+
+
+enemyCollision : Game -> Game
+enemyCollision game =
+    let
+        ( vx, vy ) =
+            game.player.v
+
+        ( x, y ) =
+            game.player.position
+
+        playerLeft =
+            findPos Left game.player
+
+        playerRight =
+            findPos Right game.player
+
+        playerBottom =
+            findPos Bottom game.player
+
+        playerTop =
+            findPos Top game.player
+
+        boxBetweenPlayerList =
+            game.enemyList
+                |> List.filter (isBoxBetweenPlayer playerTop playerBottom)
+
+        boxTouchHorzPlayer =
+            boxBetweenPlayerList |> List.filter (isBoxTouchHorzPlayer playerLeft playerRight)
+
+        ( enemyTouch, health ) =
+            if List.length boxTouchHorzPlayer == 0 then
+                ( False, game.health )
+            else
+                let
+                    newHealth =
+                        if game.enemyTouch == True then
+                            game.health
+                        else
+                            game.health - 1
+                in
+                    ( True, newHealth )
+
+        gameState =
+            if health <= 0 then
+                Dead
+            else
+                game.state
+
+        gamePlayer =
+            game.player
+    in
+        { game
+            | health = health
+            , state = gameState
+            , enemyTouch = enemyTouch
+        }
+
+
+
 ----------------------------------
 -- helper function
 -----------------------------
@@ -310,8 +298,8 @@ isBoxBelowPlayer playerLeft playerRight box =
             || (boxLeft <= playerRight && playerRight <= boxRight)
 
 
-isBoxTouchPlayer : Int -> Box -> Bool
-isBoxTouchPlayer playerBottom box =
+isBoxTouchVertPlayer : Int -> Box -> Bool
+isBoxTouchVertPlayer playerBottom box =
     let
         boxTop =
             findPos Top box
@@ -319,5 +307,32 @@ isBoxTouchPlayer playerBottom box =
         (playerBottom - boxTop) <= 0 && (playerBottom - boxTop) >= -5
 
 
+isBoxBetweenPlayer : Int -> Int -> Box -> Bool
+isBoxBetweenPlayer playerTop playerBottom box =
+    let
+        boxTop =
+            findPos Top box
 
+        boxBottom =
+            findPos Bottom box
+    in
+        (boxBottom < playerTop && playerTop <= boxTop)
+            || (boxBottom <= playerBottom && playerBottom < boxTop)
+
+
+isBoxTouchHorzPlayer : Int -> Int -> Box -> Bool
+isBoxTouchHorzPlayer playerLeft playerRight box =
+    let
+        boxLeft =
+            findPos Left box
+
+        boxRight =
+            findPos Right box
+    in
+        (0 <= (playerRight - boxLeft) && (playerRight - boxLeft) <= 15)
+
+
+
+-- || (0 >= (boxRight - playerLeft) && (boxRight - playerLeft) <= 15)
+-- || ((playerLeft - boxRight) <= 0)
 --prevent from edge shrinking

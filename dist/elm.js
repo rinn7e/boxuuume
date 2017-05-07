@@ -12990,6 +12990,34 @@ var _elm_lang$keyboard$Keyboard$subMap = F2(
 	});
 _elm_lang$core$Native_Platform.effectManagers['Keyboard'] = {pkg: 'elm-lang/keyboard', init: _elm_lang$keyboard$Keyboard$init, onEffects: _elm_lang$keyboard$Keyboard$onEffects, onSelfMsg: _elm_lang$keyboard$Keyboard$onSelfMsg, tag: 'sub', subMap: _elm_lang$keyboard$Keyboard$subMap};
 
+var _user$project$Type$enemyList = {
+	ctor: '::',
+	_0: {
+		size: {ctor: '_Tuple2', _0: 10, _1: 30},
+		position: {ctor: '_Tuple2', _0: 350, _1: 135},
+		color: 'yellow',
+		v: {ctor: '_Tuple2', _0: 0, _1: 0}
+	},
+	_1: {
+		ctor: '::',
+		_0: {
+			size: {ctor: '_Tuple2', _0: 10, _1: 30},
+			position: {ctor: '_Tuple2', _0: 550, _1: 165},
+			color: 'yellow',
+			v: {ctor: '_Tuple2', _0: 0, _1: 0}
+		},
+		_1: {
+			ctor: '::',
+			_0: {
+				size: {ctor: '_Tuple2', _0: 10, _1: 30},
+				position: {ctor: '_Tuple2', _0: 800, _1: 165},
+				color: 'yellow',
+				v: {ctor: '_Tuple2', _0: 0, _1: 0}
+			},
+			_1: {ctor: '[]'}
+		}
+	}
+};
 var _user$project$Type$initStageBoxList = {
 	ctor: '::',
 	_0: {
@@ -13018,7 +13046,7 @@ var _user$project$Type$initStageBoxList = {
 				ctor: '::',
 				_0: {
 					size: {ctor: '_Tuple2', _0: 30, _1: 30},
-					position: {ctor: '_Tuple2', _0: 255, _1: 75},
+					position: {ctor: '_Tuple2', _0: 240, _1: 75},
 					color: '#0095ff',
 					v: {ctor: '_Tuple2', _0: 0, _1: 0}
 				},
@@ -13026,7 +13054,7 @@ var _user$project$Type$initStageBoxList = {
 					ctor: '::',
 					_0: {
 						size: {ctor: '_Tuple2', _0: 300, _1: 30},
-						position: {ctor: '_Tuple2', _0: 755, _1: 135},
+						position: {ctor: '_Tuple2', _0: 745, _1: 135},
 						color: '#0095ff',
 						v: {ctor: '_Tuple2', _0: 0, _1: 0}
 					},
@@ -13034,7 +13062,7 @@ var _user$project$Type$initStageBoxList = {
 						ctor: '::',
 						_0: {
 							size: {ctor: '_Tuple2', _0: 300, _1: 30},
-							position: {ctor: '_Tuple2', _0: 1170, _1: 135},
+							position: {ctor: '_Tuple2', _0: 1150, _1: 135},
 							color: '#0095ff',
 							v: {ctor: '_Tuple2', _0: 0, _1: 0}
 						},
@@ -13067,7 +13095,13 @@ var _user$project$Type$Game = function (a) {
 							return function (h) {
 								return function (i) {
 									return function (j) {
-										return {title: a, windowSize: b, state: c, player: d, stage: e, direction: f, isJump: g, stageLeft: h, keyPressed: i, keyReleased: j};
+										return function (k) {
+											return function (l) {
+												return function (m) {
+													return {title: a, windowSize: b, state: c, player: d, health: e, enemyTouch: f, stage: g, enemyList: h, direction: i, isJump: j, stageLeft: k, keyPressed: l, keyReleased: m};
+												};
+											};
+										};
 									};
 								};
 							};
@@ -13098,11 +13132,14 @@ var _user$project$Type$NoKey = {ctor: 'NoKey'};
 var _user$project$Type$init = {
 	title: 'hello world',
 	windowSize: {ctor: '_Tuple2', _0: 600, _1: 600},
-	state: _user$project$Type$Menu,
+	state: _user$project$Type$Playing,
 	player: _user$project$Type$initPlayerBox,
+	health: 3,
+	enemyTouch: false,
 	isJump: true,
 	stageLeft: 0,
 	stage: _user$project$Type$initStageBoxList,
+	enemyList: _user$project$Type$enemyList,
 	direction: {ctor: '_Tuple2', _0: 0, _1: 0},
 	keyPressed: _user$project$Type$NoKey,
 	keyReleased: _user$project$Type$NoKey
@@ -13121,6 +13158,117 @@ var _user$project$Type$Tick = function (a) {
 	return {ctor: 'Tick', _0: a};
 };
 var _user$project$Type$NoOp = {ctor: 'NoOp'};
+
+var _user$project$Control$keyReleasedUpdate = F2(
+	function (game, key) {
+		var gamePlayer = game.player;
+		var keyPressed = game.keyPressed;
+		var _p0 = game.player.v;
+		var vx = _p0._0;
+		var vy = _p0._1;
+		var _p1 = function () {
+			var _p2 = key;
+			switch (_p2.ctor) {
+				case 'LeftKey':
+					return _elm_lang$core$Native_Utils.eq(keyPressed, _user$project$Type$RightKey) ? {ctor: '_Tuple2', _0: vx, _1: vy} : {ctor: '_Tuple2', _0: 0, _1: vy};
+				case 'RightKey':
+					return _elm_lang$core$Native_Utils.eq(keyPressed, _user$project$Type$LeftKey) ? {ctor: '_Tuple2', _0: vx, _1: vy} : {ctor: '_Tuple2', _0: 0, _1: vy};
+				case 'UpKey':
+					return _elm_lang$core$Native_Utils.eq(keyPressed, _user$project$Type$DownKey) ? {ctor: '_Tuple2', _0: vx, _1: vy} : {ctor: '_Tuple2', _0: vx, _1: 0};
+				case 'DownKey':
+					return _elm_lang$core$Native_Utils.eq(keyPressed, _user$project$Type$UpKey) ? {ctor: '_Tuple2', _0: vx, _1: vy} : {ctor: '_Tuple2', _0: vx, _1: 0};
+				default:
+					return {ctor: '_Tuple2', _0: 0, _1: 0};
+			}
+		}();
+		var vx2 = _p1._0;
+		var vy2 = _p1._1;
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				game,
+				{
+					player: _elm_lang$core$Native_Utils.update(
+						gamePlayer,
+						{
+							v: {ctor: '_Tuple2', _0: vx2, _1: vy2}
+						})
+				}),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _user$project$Control$keyPressedUpdate = F2(
+	function (game, key) {
+		var gamePlayer = game.player;
+		var _p3 = game.player.v;
+		var vx = _p3._0;
+		var vy = _p3._1;
+		var _p4 = function () {
+			var _p5 = key;
+			switch (_p5.ctor) {
+				case 'LeftKey':
+					return {ctor: '_Tuple2', _0: -4, _1: vy};
+				case 'RightKey':
+					return {ctor: '_Tuple2', _0: 4, _1: vy};
+				case 'UpKey':
+					return game.isJump ? {ctor: '_Tuple2', _0: vx, _1: vy} : {ctor: '_Tuple2', _0: vx, _1: 10};
+				case 'DownKey':
+					return {ctor: '_Tuple2', _0: vx, _1: vy};
+				default:
+					return {ctor: '_Tuple2', _0: 0, _1: 0};
+			}
+		}();
+		var vx2 = _p4._0;
+		var vy2 = _p4._1;
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				game,
+				{
+					player: _elm_lang$core$Native_Utils.update(
+						gamePlayer,
+						{
+							v: {ctor: '_Tuple2', _0: vx2, _1: vy2}
+						}),
+					keyPressed: key
+				}),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _user$project$Control$keyReleased = function (code) {
+	var _p6 = code;
+	switch (_p6) {
+		case 37:
+			return _user$project$Type$KeyReleased(_user$project$Type$LeftKey);
+		case 38:
+			return _user$project$Type$KeyReleased(_user$project$Type$UpKey);
+		case 39:
+			return _user$project$Type$KeyReleased(_user$project$Type$RightKey);
+		case 40:
+			return _user$project$Type$KeyReleased(_user$project$Type$DownKey);
+		default:
+			return _user$project$Type$KeyReleased(_user$project$Type$NoKey);
+	}
+};
+var _user$project$Control$keyPressed = function (code) {
+	var _p7 = code;
+	switch (_p7) {
+		case 37:
+			return _user$project$Type$KeyPressed(_user$project$Type$LeftKey);
+		case 38:
+			return _user$project$Type$KeyPressed(_user$project$Type$UpKey);
+		case 39:
+			return _user$project$Type$KeyPressed(_user$project$Type$RightKey);
+		case 40:
+			return _user$project$Type$KeyPressed(_user$project$Type$DownKey);
+		case 80:
+			return _user$project$Type$ChangeState(_user$project$Type$Pause);
+		default:
+			return _user$project$Type$KeyPressed(_user$project$Type$NoKey);
+	}
+};
+var _user$project$Control$keyReleasedBind = _elm_lang$keyboard$Keyboard$ups(_user$project$Control$keyReleased);
+var _user$project$Control$keyPressedBind = _elm_lang$keyboard$Keyboard$downs(_user$project$Control$keyPressed);
 
 var _user$project$Logic$findPos = F2(
 	function (positionType, box) {
@@ -13152,89 +13300,117 @@ var _user$project$Logic$isBoxBelowPlayer = F3(
 		var boxLeft = A2(_user$project$Logic$findPos, _user$project$Type$Left, box);
 		return ((_elm_lang$core$Native_Utils.cmp(boxLeft, playerLeft) < 1) && (_elm_lang$core$Native_Utils.cmp(playerLeft, boxRight) < 1)) || ((_elm_lang$core$Native_Utils.cmp(boxLeft, playerRight) < 1) && (_elm_lang$core$Native_Utils.cmp(playerRight, boxRight) < 1));
 	});
-var _user$project$Logic$isBoxTouchPlayer = F2(
+var _user$project$Logic$isBoxTouchVertPlayer = F2(
 	function (playerBottom, box) {
 		var boxTop = A2(_user$project$Logic$findPos, _user$project$Type$Top, box);
 		return (_elm_lang$core$Native_Utils.cmp(playerBottom - boxTop, 0) < 1) && (_elm_lang$core$Native_Utils.cmp(playerBottom - boxTop, -5) > -1);
 	});
-var _user$project$Logic$keyReleasedUpdate = F2(
-	function (game, key) {
-		var gamePlayer = game.player;
-		var keyPressed = game.keyPressed;
-		var _p3 = game.player.v;
-		var vx = _p3._0;
-		var vy = _p3._1;
-		var _p4 = function () {
-			var _p5 = key;
-			switch (_p5.ctor) {
-				case 'LeftKey':
-					return _elm_lang$core$Native_Utils.eq(keyPressed, _user$project$Type$RightKey) ? {ctor: '_Tuple2', _0: vx, _1: vy} : {ctor: '_Tuple2', _0: 0, _1: vy};
-				case 'RightKey':
-					return _elm_lang$core$Native_Utils.eq(keyPressed, _user$project$Type$LeftKey) ? {ctor: '_Tuple2', _0: vx, _1: vy} : {ctor: '_Tuple2', _0: 0, _1: vy};
-				case 'UpKey':
-					return _elm_lang$core$Native_Utils.eq(keyPressed, _user$project$Type$DownKey) ? {ctor: '_Tuple2', _0: vx, _1: vy} : {ctor: '_Tuple2', _0: vx, _1: 0};
-				case 'DownKey':
-					return _elm_lang$core$Native_Utils.eq(keyPressed, _user$project$Type$UpKey) ? {ctor: '_Tuple2', _0: vx, _1: vy} : {ctor: '_Tuple2', _0: vx, _1: 0};
-				default:
-					return {ctor: '_Tuple2', _0: 0, _1: 0};
-			}
-		}();
-		var vx2 = _p4._0;
-		var vy2 = _p4._1;
-		return {
-			ctor: '_Tuple2',
-			_0: _elm_lang$core$Native_Utils.update(
-				game,
-				{
-					player: _elm_lang$core$Native_Utils.update(
-						gamePlayer,
-						{
-							v: {ctor: '_Tuple2', _0: vx2, _1: vy2}
-						})
-				}),
-			_1: _elm_lang$core$Platform_Cmd$none
-		};
+var _user$project$Logic$isBoxBetweenPlayer = F3(
+	function (playerTop, playerBottom, box) {
+		var boxBottom = A2(_user$project$Logic$findPos, _user$project$Type$Bottom, box);
+		var boxTop = A2(_user$project$Logic$findPos, _user$project$Type$Top, box);
+		return ((_elm_lang$core$Native_Utils.cmp(boxBottom, playerTop) < 0) && (_elm_lang$core$Native_Utils.cmp(playerTop, boxTop) < 1)) || ((_elm_lang$core$Native_Utils.cmp(boxBottom, playerBottom) < 1) && (_elm_lang$core$Native_Utils.cmp(playerBottom, boxTop) < 0));
 	});
-var _user$project$Logic$keyPressedUpdate = F2(
-	function (game, key) {
-		var gamePlayer = game.player;
-		var _p6 = game.player.v;
-		var vx = _p6._0;
-		var vy = _p6._1;
-		var _p7 = function () {
-			var _p8 = key;
-			switch (_p8.ctor) {
-				case 'LeftKey':
-					return {ctor: '_Tuple2', _0: -4, _1: vy};
-				case 'RightKey':
-					return {ctor: '_Tuple2', _0: 4, _1: vy};
-				case 'UpKey':
-					return game.isJump ? {ctor: '_Tuple2', _0: vx, _1: vy} : {ctor: '_Tuple2', _0: vx, _1: 10};
-				case 'DownKey':
-					return {ctor: '_Tuple2', _0: vx, _1: vy};
-				default:
-					return {ctor: '_Tuple2', _0: 0, _1: 0};
-			}
-		}();
-		var vx2 = _p7._0;
-		var vy2 = _p7._1;
-		return {
-			ctor: '_Tuple2',
-			_0: _elm_lang$core$Native_Utils.update(
-				game,
-				{
-					player: _elm_lang$core$Native_Utils.update(
-						gamePlayer,
-						{
-							v: {ctor: '_Tuple2', _0: vx2, _1: vy2}
-						}),
-					keyPressed: key
-				}),
-			_1: _elm_lang$core$Platform_Cmd$none
-		};
+var _user$project$Logic$isBoxTouchHorzPlayer = F3(
+	function (playerLeft, playerRight, box) {
+		var boxRight = A2(_user$project$Logic$findPos, _user$project$Type$Right, box);
+		var boxLeft = A2(_user$project$Logic$findPos, _user$project$Type$Left, box);
+		return (_elm_lang$core$Native_Utils.cmp(0, playerRight - boxLeft) < 1) && (_elm_lang$core$Native_Utils.cmp(playerRight - boxLeft, 15) < 1);
 	});
+var _user$project$Logic$enemyCollision = function (game) {
+	var gamePlayer = game.player;
+	var playerTop = A2(_user$project$Logic$findPos, _user$project$Type$Top, game.player);
+	var playerBottom = A2(_user$project$Logic$findPos, _user$project$Type$Bottom, game.player);
+	var boxBetweenPlayerList = A2(
+		_elm_lang$core$List$filter,
+		A2(_user$project$Logic$isBoxBetweenPlayer, playerTop, playerBottom),
+		game.enemyList);
+	var playerRight = A2(_user$project$Logic$findPos, _user$project$Type$Right, game.player);
+	var playerLeft = A2(_user$project$Logic$findPos, _user$project$Type$Left, game.player);
+	var boxTouchHorzPlayer = A2(
+		_elm_lang$core$List$filter,
+		A2(_user$project$Logic$isBoxTouchHorzPlayer, playerLeft, playerRight),
+		boxBetweenPlayerList);
+	var _p3 = function () {
+		if (_elm_lang$core$Native_Utils.eq(
+			_elm_lang$core$List$length(boxTouchHorzPlayer),
+			0)) {
+			return {ctor: '_Tuple2', _0: false, _1: game.health};
+		} else {
+			var newHealth = _elm_lang$core$Native_Utils.eq(game.enemyTouch, true) ? game.health : (game.health - 1);
+			return {ctor: '_Tuple2', _0: true, _1: newHealth};
+		}
+	}();
+	var enemyTouch = _p3._0;
+	var health = _p3._1;
+	var gameState = (_elm_lang$core$Native_Utils.cmp(health, 0) < 1) ? _user$project$Type$Dead : game.state;
+	var _p4 = game.player.position;
+	var x = _p4._0;
+	var y = _p4._1;
+	var _p5 = game.player.v;
+	var vx = _p5._0;
+	var vy = _p5._1;
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{health: health, state: gameState, enemyTouch: enemyTouch});
+};
 var _user$project$Logic$collisionHorizontal = function (game) {
-	return game;
+	var gamePlayer = game.player;
+	var playerRight = A2(_user$project$Logic$findPos, _user$project$Type$Right, game.player);
+	var playerLeft = A2(_user$project$Logic$findPos, _user$project$Type$Left, game.player);
+	var playerTop = A2(_user$project$Logic$findPos, _user$project$Type$Top, game.player);
+	var playerBottom = A2(_user$project$Logic$findPos, _user$project$Type$Bottom, game.player);
+	var boxBetweenPlayerList = A2(
+		_elm_lang$core$List$filter,
+		A2(_user$project$Logic$isBoxBetweenPlayer, playerTop, playerBottom),
+		game.stage);
+	var _p6 = A2(_elm_lang$core$Debug$log, 'boxBetweenPlayer', boxBetweenPlayerList);
+	var boxTouchHorzPlayer = A2(
+		_elm_lang$core$List$filter,
+		A2(_user$project$Logic$isBoxTouchHorzPlayer, playerLeft, playerRight),
+		boxBetweenPlayerList);
+	var _p7 = A2(_elm_lang$core$Debug$log, 'boxTouchHorzPlayer', boxTouchHorzPlayer);
+	var _p8 = game.player.size;
+	var width = _p8._0;
+	var height = _p8._1;
+	var _p9 = game.player.position;
+	var x = _p9._0;
+	var y = _p9._1;
+	var _p10 = game.player.v;
+	var vx = _p10._0;
+	var vy = _p10._1;
+	var _p11 = function () {
+		if (_elm_lang$core$Native_Utils.eq(
+			_elm_lang$core$List$length(boxTouchHorzPlayer),
+			0)) {
+			return {ctor: '_Tuple2', _0: vx, _1: x};
+		} else {
+			var box = A2(
+				_elm_lang$core$Maybe$withDefault,
+				_user$project$Type$emptyStageBox,
+				_elm_lang$core$List$head(boxTouchHorzPlayer));
+			var boxPosX = _elm_lang$core$Tuple$first(box.position);
+			var boxWidth = _elm_lang$core$Tuple$first(box.size);
+			return {
+				ctor: '_Tuple2',
+				_0: vx,
+				_1: _elm_lang$core$Basics$round(
+					(_elm_lang$core$Basics$toFloat(boxPosX) - (_elm_lang$core$Basics$toFloat(boxWidth) / 2)) - (_elm_lang$core$Basics$toFloat(width) / 2)) - 1
+			};
+		}
+	}();
+	var vx2 = _p11._0;
+	var newPosX = _p11._1;
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{
+			player: _elm_lang$core$Native_Utils.update(
+				gamePlayer,
+				{
+					v: {ctor: '_Tuple2', _0: vx2, _1: vy},
+					position: {ctor: '_Tuple2', _0: newPosX, _1: y}
+				})
+		});
 };
 var _user$project$Logic$collisionVertical = function (game) {
 	var gamePlayer = game.player;
@@ -13247,16 +13423,18 @@ var _user$project$Logic$collisionVertical = function (game) {
 		game.stage);
 	var boxTouchPlayer = A2(
 		_elm_lang$core$List$filter,
-		_user$project$Logic$isBoxTouchPlayer(playerBottom),
+		_user$project$Logic$isBoxTouchVertPlayer(playerBottom),
 		boxBelowPlayerList);
 	var debugBoxTouchPlayer = A2(_elm_lang$core$Debug$log, 'boxTouchPlayer', boxTouchPlayer);
-	var _p9 = game.player.position;
-	var x = _p9._0;
-	var y = _p9._1;
-	var _p10 = game.player.v;
-	var vx = _p10._0;
-	var vy = _p10._1;
-	var _p11 = function () {
+	var _p12 = game.player.position;
+	var x = _p12._0;
+	var y = _p12._1;
+	var _p13 = A2(_elm_lang$core$Debug$log, 'Debug:', y);
+	var gameState = (_elm_lang$core$Native_Utils.cmp(y, 0) < 0) ? _user$project$Type$Dead : _user$project$Type$Playing;
+	var _p14 = game.player.v;
+	var vx = _p14._0;
+	var vy = _p14._1;
+	var _p15 = function () {
 		if (_elm_lang$core$Native_Utils.eq(
 			_elm_lang$core$List$length(boxTouchPlayer),
 			0)) {
@@ -13271,10 +13449,10 @@ var _user$project$Logic$collisionVertical = function (game) {
 			return {ctor: '_Tuple4', _0: vx, _1: 0, _2: boxPosY + boxHeight, _3: false};
 		}
 	}();
-	var vx2 = _p11._0;
-	var vy2 = _p11._1;
-	var newPoxY = _p11._2;
-	var jumpStatus = _p11._3;
+	var vx2 = _p15._0;
+	var vy2 = _p15._1;
+	var newPosY = _p15._2;
+	var jumpStatus = _p15._3;
 	return _elm_lang$core$Native_Utils.update(
 		game,
 		{
@@ -13282,26 +13460,27 @@ var _user$project$Logic$collisionVertical = function (game) {
 				gamePlayer,
 				{
 					v: {ctor: '_Tuple2', _0: vx2, _1: vy2},
-					position: {ctor: '_Tuple2', _0: x, _1: newPoxY}
+					position: {ctor: '_Tuple2', _0: x, _1: newPosY}
 				}),
-			isJump: jumpStatus
+			isJump: jumpStatus,
+			state: gameState
 		});
 };
 var _user$project$Logic$motion = function (game) {
 	var gamePlayer = game.player;
-	var _p12 = game.player.v;
-	var vx = _p12._0;
-	var vy = _p12._1;
-	var _p13 = game.player.position;
-	var x = _p13._0;
-	var y = _p13._1;
-	var _p14 = {
+	var _p16 = game.player.v;
+	var vx = _p16._0;
+	var vy = _p16._1;
+	var _p17 = game.player.position;
+	var x = _p17._0;
+	var y = _p17._1;
+	var _p18 = {
 		ctor: '_Tuple2',
 		_0: x + _elm_lang$core$Basics$round(vx),
 		_1: y + _elm_lang$core$Basics$round(vy)
 	};
-	var x2 = _p14._0;
-	var y2 = _p14._1;
+	var x2 = _p18._0;
+	var y2 = _p18._1;
 	var newStageLeft = (_elm_lang$core$Native_Utils.cmp((0 - x2) + 100, 0) > -1) ? game.stageLeft : ((0 - x2) + 100);
 	return _elm_lang$core$Native_Utils.update(
 		game,
@@ -13317,48 +13496,56 @@ var _user$project$Logic$motion = function (game) {
 var _user$project$Logic$gameUpdate = function (game) {
 	return {
 		ctor: '_Tuple2',
-		_0: _user$project$Logic$collisionHorizontal(
+		_0: _user$project$Logic$enemyCollision(
 			_user$project$Logic$collisionVertical(
-				_user$project$Logic$motion(game))),
+				_user$project$Logic$collisionHorizontal(
+					_user$project$Logic$motion(game)))),
 		_1: _elm_lang$core$Platform_Cmd$none
 	};
 };
-var _user$project$Logic$keyReleased = function (code) {
-	var _p15 = code;
-	switch (_p15) {
-		case 37:
-			return _user$project$Type$KeyReleased(_user$project$Type$LeftKey);
-		case 38:
-			return _user$project$Type$KeyReleased(_user$project$Type$UpKey);
-		case 39:
-			return _user$project$Type$KeyReleased(_user$project$Type$RightKey);
-		case 40:
-			return _user$project$Type$KeyReleased(_user$project$Type$DownKey);
-		default:
-			return _user$project$Type$KeyReleased(_user$project$Type$NoKey);
-	}
-};
-var _user$project$Logic$keyPressed = function (code) {
-	var _p16 = code;
-	switch (_p16) {
-		case 37:
-			return _user$project$Type$KeyPressed(_user$project$Type$LeftKey);
-		case 38:
-			return _user$project$Type$KeyPressed(_user$project$Type$UpKey);
-		case 39:
-			return _user$project$Type$KeyPressed(_user$project$Type$RightKey);
-		case 40:
-			return _user$project$Type$KeyPressed(_user$project$Type$DownKey);
-		case 80:
-			return _user$project$Type$ChangeState(_user$project$Type$Pause);
-		default:
-			return _user$project$Type$KeyPressed(_user$project$Type$NoKey);
-	}
-};
-var _user$project$Logic$keyReleasedBind = _elm_lang$keyboard$Keyboard$ups(_user$project$Logic$keyReleased);
-var _user$project$Logic$keyPressedBind = _elm_lang$keyboard$Keyboard$downs(_user$project$Logic$keyPressed);
-var _user$project$Logic$tick = A2(_elm_lang$core$Time$every, (1000 / 60) * _elm_lang$core$Time$millisecond, _user$project$Type$Tick);
 
+var _user$project$Render$healthBox = function (amount) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'backgroundColor', _1: 'red'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'position', _1: 'fixed'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'height', _1: '20px'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'width', _1: '20px'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'top', _1: '100px'},
+									_1: {
+										ctor: '::',
+										_0: {
+											ctor: '_Tuple2',
+											_0: 'left',
+											_1: A2(
+												_elm_lang$core$Basics_ops['++'],
+												_elm_lang$core$Basics$toString(amount * 30),
+												'px')
+										},
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{ctor: '[]'});
+};
 var _user$project$Render$boxRender = function (box) {
 	var _p0 = box.size;
 	var width = _p0._0;
@@ -13577,11 +13764,24 @@ var _user$project$Render$render = function (game) {
 								_0: A2(
 									_elm_lang$html$Html$div,
 									{ctor: '[]'},
-									A2(_elm_lang$core$List$map, _user$project$Render$boxRender, game.stage)),
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										A2(_elm_lang$core$List$map, _user$project$Render$boxRender, game.stage),
+										A2(_elm_lang$core$List$map, _user$project$Render$boxRender, game.enemyList))),
 								_1: {
 									ctor: '::',
 									_0: _user$project$Render$boxRender(game.player),
-									_1: {ctor: '[]'}
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$div,
+											{ctor: '[]'},
+											A2(
+												_elm_lang$core$List$map,
+												_user$project$Render$healthBox,
+												A2(_elm_lang$core$List$range, 1, game.health))),
+										_1: {ctor: '[]'}
+									}
 								}
 							});
 					case 'Pause':
@@ -13655,14 +13855,62 @@ var _user$project$Render$render = function (game) {
 					default:
 						return A2(
 							_elm_lang$html$Html$div,
-							{ctor: '[]'},
-							{ctor: '[]'});
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'color', _1: 'white'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'position', _1: 'relative'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'left', _1: '250px'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'height', _1: '250px'},
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$h1,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Dead'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$p,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Events$onClick(_user$project$Type$Restart),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Restart'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}
+							});
 				}
 			}(),
 			_1: {ctor: '[]'}
 		});
 };
 
+var _user$project$Main$tick = A2(_elm_lang$core$Time$every, (1000 / 60) * _elm_lang$core$Time$millisecond, _user$project$Type$Tick);
 var _user$project$Main$subscriptions = function (game) {
 	var _p0 = game.state;
 	switch (_p0.ctor) {
@@ -13672,13 +13920,13 @@ var _user$project$Main$subscriptions = function (game) {
 			return _elm_lang$core$Platform_Sub$batch(
 				{
 					ctor: '::',
-					_0: _user$project$Logic$keyPressedBind,
+					_0: _user$project$Control$keyPressedBind,
 					_1: {
 						ctor: '::',
-						_0: _user$project$Logic$keyReleasedBind,
+						_0: _user$project$Control$keyReleasedBind,
 						_1: {
 							ctor: '::',
-							_0: _user$project$Logic$tick,
+							_0: _user$project$Main$tick,
 							_1: {ctor: '[]'}
 						}
 					}
@@ -13694,9 +13942,9 @@ var _user$project$Main$update = F2(
 			case 'Tick':
 				return _user$project$Logic$gameUpdate(game);
 			case 'KeyPressed':
-				return A2(_user$project$Logic$keyPressedUpdate, game, _p1._0);
+				return A2(_user$project$Control$keyPressedUpdate, game, _p1._0);
 			case 'KeyReleased':
-				return A2(_user$project$Logic$keyReleasedUpdate, game, _p1._0);
+				return A2(_user$project$Control$keyReleasedUpdate, game, _p1._0);
 			case 'ChangeState':
 				return {
 					ctor: '_Tuple2',

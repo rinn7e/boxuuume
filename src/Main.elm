@@ -4,6 +4,8 @@ import Html exposing (..)
 import Type exposing (..)
 import Render exposing (..)
 import Logic exposing (..)
+import Control exposing (..)
+import Time exposing (..)
 
 
 main : Program Never Game Msg
@@ -50,3 +52,12 @@ subscriptions game =
 
         _ ->
             Sub.none
+
+
+
+-- Subscriptions Listen in background
+
+
+tick : Sub Msg
+tick =
+    Time.every ((1000 / 60) * Time.millisecond) Tick

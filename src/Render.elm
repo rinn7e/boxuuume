@@ -35,8 +35,9 @@ render game =
                             , ( "height", (toString height) ++ "px" )
                             ]
                         ]
-                        [ div [] (List.map boxRender game.stage)
+                        [ div [] ((List.map boxRender game.stage) ++ (List.map boxRender game.enemyList))
                         , boxRender game.player
+                        , div [] (List.map healthBox (List.range 1 game.health))
                         ]
 
                 Pause ->
@@ -53,8 +54,18 @@ render game =
                         , p [ onClick (Restart) ] [ text "Restart" ]
                         ]
 
-                _ ->
-                    div [] []
+                Dead ->
+                    div
+                        [ style
+                            [ ( "color", "white" )
+                            , ( "position", "relative" )
+                            , ( "left", "250px" )
+                            , ( "height", "250px" )
+                            ]
+                        ]
+                        [ h1 [] [ text "Dead" ]
+                        , p [ onClick (Restart) ] [ text "Restart" ]
+                        ]
             ]
 
 
@@ -96,3 +107,17 @@ boxRender box =
                 ]
             ]
             []
+
+
+healthBox amount =
+    div
+        [ style
+            [ ( "backgroundColor", "red" )
+            , ( "position", "fixed" )
+            , ( "height", "20px" )
+            , ( "width", "20px" )
+            , ( "top", "100px" )
+            , ( "left", (toString (amount * 30)) ++ "px" )
+            ]
+        ]
+        []

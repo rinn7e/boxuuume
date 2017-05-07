@@ -8,7 +8,10 @@ type alias Game =
     , windowSize : ( Int, Int )
     , state : StateModel
     , player : Box
+    , health : Int
+    , enemyTouch : Bool
     , stage : List Box
+    , enemyList : List Box
     , direction : ( Int, Int )
     , isJump : Bool
     , stageLeft : Int
@@ -21,11 +24,14 @@ init : Game
 init =
     { title = "hello world"
     , windowSize = ( 600, 600 )
-    , state = Menu
+    , state = Playing
     , player = initPlayerBox
+    , health = 3
+    , enemyTouch = False
     , isJump = True
     , stageLeft = 0
     , stage = initStageBoxList
+    , enemyList = enemyList
     , direction = ( 0, 0 )
     , keyPressed = NoKey
     , keyReleased = NoKey
@@ -93,19 +99,43 @@ initStageBoxList =
       , color = "#0095ff"
       , v = ( 0, 0 )
       }
+      -- , { size = ( 30, 30 )
+      --   , position = ( 100, 45 )
+      --   , color = "#0095ff"
+      --   , v = ( 0, 0 )
+      --   }
     , { size = ( 30, 30 )
-      , position = ( 255, 75 )
+      , position = ( 240, 75 )
       , color = "#0095ff"
       , v = ( 0, 0 )
       }
     , { size = ( 300, 30 )
-      , position = ( 755, 135 )
+      , position = ( 745, 135 )
       , color = "#0095ff"
       , v = ( 0, 0 )
       }
     , { size = ( 300, 30 )
-      , position = ( 1170, 135 )
+      , position = ( 1150, 135 )
       , color = "#0095ff"
+      , v = ( 0, 0 )
+      }
+    ]
+
+
+enemyList =
+    [ { size = ( 10, 30 )
+      , position = ( 350, 135 )
+      , color = "yellow"
+      , v = ( 0, 0 )
+      }
+    , { size = ( 10, 30 )
+      , position = ( 550, 165 )
+      , color = "yellow"
+      , v = ( 0, 0 )
+      }
+    , { size = ( 10, 30 )
+      , position = ( 800, 165 )
+      , color = "yellow"
       , v = ( 0, 0 )
       }
     ]
