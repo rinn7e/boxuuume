@@ -37,6 +37,9 @@ update msg game =
         Restart ->
             ( { init | state = Playing }, Cmd.none )
 
+        ShootBullet ->
+            ( shootBullet game, Cmd.none )
+
         _ ->
             ( game, Cmd.none )
 
@@ -48,6 +51,9 @@ subscriptions game =
             Sub.none
 
         Playing ->
+            Sub.batch [ keyPressedBind, keyReleasedBind, tick ]
+
+        Boss ->
             Sub.batch [ keyPressedBind, keyReleasedBind, tick ]
 
         _ ->

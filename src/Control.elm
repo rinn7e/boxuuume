@@ -32,6 +32,9 @@ keyPressed code =
         80 ->
             ChangeState Pause
 
+        32 ->
+            ShootBullet
+
         default ->
             KeyPressed NoKey
 
@@ -133,3 +136,20 @@ keyReleasedUpdate game key =
             game.player
     in
         ( { game | player = { gamePlayer | v = ( vx2, vy2 ) } }, Cmd.none )
+
+
+shootBullet game =
+    let
+        newBullet =
+            { size = ( 10, 10 )
+            , position = game.player.position
+            , color = "lawngreen"
+            , v = ( 0, 0 )
+            , range = 0
+            , direction = 1
+            }
+
+        newBulletList =
+            newBullet :: game.bulletList
+    in
+        ({ game | bulletList = newBulletList })

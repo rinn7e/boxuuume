@@ -1,5 +1,3 @@
-npm install -g json-server $$ elm-package install
-or npm install json-server --save (local install) run using ./node_modules/json-server sth stch
-run server: json-server --watch db.json
-run client: elm-live src/Main.elm --open
-or: elm-reactor
+#Boxuuume
+
+Boxuuume is a game that is creatd for a school project. It built with Elm, an amazing frontend programming language. Elm focuses on Web App, however it can also use for creating web game.
